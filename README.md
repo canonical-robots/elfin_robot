@@ -3,6 +3,10 @@ Elfin Robot
 
 ![elfin_robot](docs/images/elfin.png)
 
+This repository is intended to develop ROS Industrial support for Elfin Robot. It is a fork of https://github.com/hans-robot/elfin_robot
+
+So you can expect quite a lot of updates going on.
+
 This repository provides ROS support for the Elfin Robot. The recommend operating environment is on Ubuntu 16.04 with ROS Kinetic or Ubuntu 14.04 with ROS Indigo. So far These packages haven't been tested in other environment.
 
 ### Installation
