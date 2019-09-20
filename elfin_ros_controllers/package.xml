@@ -8,7 +8,7 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="maintenance@canonicalrobots.com">Cong Liu</maintainer>
+  <maintainer email="support@canonicalrobots.com">Canonical Robots</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -54,7 +54,6 @@
   <exec_depend>elfin_hardware_interface</exec_depend>
   <exec_depend>elfin_postrq_joint_trajectory_controller</exec_depend>
   <exec_depend>elfin_posvel_joint_trajectory_controller</exec_depend>
-  <exec_depend>roscpp</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
