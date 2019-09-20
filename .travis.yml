@@ -5,7 +5,8 @@ language: generic # optional, just removes the language badge
 
 services:
   - docker
-
+compiler:
+  - gcc
 # include the following block if the C/C++ build artifacts should get cached by Travis,
 # CCACHE_DIR needs to get set as well to actually fill the cache
 cache:
