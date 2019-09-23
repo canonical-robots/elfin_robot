@@ -24,8 +24,8 @@ env:
     - CCACHE_DIR=$HOME/.ccache # enables C/C++ caching in industrial_ci
   matrix: # each line is a job
 #    - ROS_DISTRO="lunar" ROS_REPO=ros-shadow-fixed # overrides the global
-#    - ROS_DISTRO="kinetic"
-    - ROS_DISTRO="melodic"
+    - ROS_DISTRO="kinetic"
+#    - ROS_DISTRO="melodic"
 
 # allow failures, e.g. for unsupported distros
 matrix:
