@@ -49,6 +49,8 @@
   <!--   <test_depend>gtest</test_depend> -->
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
   <exec_depend>elfin_hardware_interface</exec_depend>
   <exec_depend>elfin_postrq_joint_trajectory_controller</exec_depend>
