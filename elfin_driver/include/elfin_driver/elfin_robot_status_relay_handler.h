@@ -34,6 +34,7 @@
 #define ELFIN_ROBOT_STATUS_RELAY_HANDLER_H
 
 #include "industrial_robot_client/robot_status_relay_handler.h"
+#include "std_msgs/Bool.h"
 
 
 namespace elfin_driver
@@ -48,9 +49,30 @@ namespace elfin_robot_status_relay_handler
  * THIS CLASS IS NOT THREAD-SAFE
  *
  */
-class ElfinStatusRelayHandler : public industrial_robot_client::robot_status_relay_handler::RobotStatusRelayHandler 
+class ElfinRobotStatusRelayHandler : public industrial::message_handler::MessageHandler 
 {
+  // since this class defines a different init(), this helps find the base-class init()
+  using industrial::message_handler::MessageHandler::init;
+
+public:
+ 
+   /**
+* \brief Constructor
+*/
+  ElfinRobotStatusRelayHandler() {};
+  /**
+  * \brief Class initializer
+  *
+  * \return true on success, false otherwise 
+  */
+ bool init(void);
+  
 protected:
+  
+  ros::Subscriber sub_robot_status_;
+  ros::Publisher pub_robot_status_;
+  ros::NodeHandle node_;
+  
   /**
    * \brief Callback executed upon receiving a robot status message
    *
@@ -58,7 +80,8 @@ protected:
    *
    * \return true on success, false otherwise
    */
-  bool internalCB(industrial::robot_status_message::RobotStatusMessage & in);
+  void internalCB(const std_msgs::Bool & in);
+  bool internalCB(industrial::simple_message::SimpleMessage & in);
 
 };
 

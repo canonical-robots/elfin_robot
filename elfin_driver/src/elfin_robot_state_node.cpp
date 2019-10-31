@@ -30,10 +30,10 @@
  */
 
 #include "elfin_driver/elfin_robot_status_relay_handler.h"
-#include "industrial_robot_client/robot_state_interface.h"
+#include "elfin_driver/elfin_robot_state_interface.h"
 
-using industrial_robot_client::robot_state_interface::RobotStateInterface;
-using elfin_driver::elfin_robot_status_relay_handler::ElfinStatusRelayHandler;
+using elfin_driver::elfin_robot_state_interface::ElfinRobotStateInterface;
+using elfin_driver::elfin_robot_status_relay_handler::ElfinRobotStatusRelayHandler;
 
 int main(int argc, char** argv)
 {
@@ -41,8 +41,8 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "state_interface");
 
   // launch the default Robot State Interface connection/handlers
-  RobotStateInterface rsi;
-  ElfinStatusRelayHandler statusHandler;
+  ElfinRobotStateInterface rsi;
+  ElfinRobotStatusRelayHandler statusHandler;
 
   rsi.add_handler(&statusHandler);
 

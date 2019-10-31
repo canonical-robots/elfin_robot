@@ -45,11 +45,23 @@ namespace elfin_driver
 namespace elfin_robot_status_relay_handler
 {
 
-bool ElfinStatusRelayHandler::internalCB(RobotStatusMessage & in)
+bool ElfinRobotStatusRelayHandler::init()
+{
+  sub_robot_status_ = node_.subscribe("chatter", 1000, &ElfinRobotStatusRelayHandler::internalCB, this);
+  return true;
+}
+
+bool ElfinRobotStatusRelayHandler::internalCB(SimpleMessage & in)
+{
+	ROS_ERROR("Not implemented");
+	return false;
+}
+
+void ElfinRobotStatusRelayHandler::internalCB(const std_msgs::Bool & in)
 {
   industrial_msgs::RobotStatus status;
   bool rtn = true;
-
+/*
   status.header.stamp = ros::Time::now();
   status.drives_powered.val = TriStates::toROSMsgEnum(in.status_.getDrivesPowered());
   status.e_stopped.val = TriStates::toROSMsgEnum(in.status_.getEStopped());
@@ -58,18 +70,17 @@ bool ElfinStatusRelayHandler::internalCB(RobotStatusMessage & in)
   status.in_motion.val = TriStates::toROSMsgEnum(in.status_.getInMotion());
   status.mode.val = RobotModes::toROSMsgEnum(in.status_.getMode());
   status.motion_possible.val = TriStates::toROSMsgEnum(in.status_.getMotionPossible());
-  
+  */
   this->pub_robot_status_.publish(status);
 
   // Reply back to the controller if the sender requested it.
-  if (CommTypes::SERVICE_REQUEST == in.getCommType())
+/*  if (CommTypes::SERVICE_REQUEST == in.getCommType())
   {
     SimpleMessage reply;
     in.toReply(reply, rtn ? ReplyTypes::SUCCESS : ReplyTypes::FAILURE);
     this->getConnection()->sendMsg(reply);
   }
-
-  return rtn;
+*/
 }
 
 }

@@ -16,6 +16,8 @@ include_directories(
 add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
 
 add_executable(${PROJECT_NAME}_robot_state
+  src/elfin_robot_status_relay_handler.cpp
+  src/elfin_robot_state_interface.cpp
   src/elfin_robot_state_node.cpp
   src/elfin_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_robot_state
