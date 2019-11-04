@@ -47,7 +47,7 @@ namespace elfin_robot_status_relay_handler
 
 bool ElfinRobotStatusRelayHandler::init()
 {
-  sub_robot_status_ = node_.subscribe("chatter", 1000, &ElfinRobotStatusRelayHandler::internalCB, this);
+  sub_robot_status_ = node_.subscribe("/elfin_ros_control/elfin/enable_state", 1000, &ElfinRobotStatusRelayHandler::servoEnabledCB, this);
   return true;
 }
 
@@ -57,14 +57,16 @@ bool ElfinRobotStatusRelayHandler::internalCB(SimpleMessage & in)
 	return false;
 }
 
-void ElfinRobotStatusRelayHandler::internalCB(const std_msgs::Bool & in)
+void ElfinRobotStatusRelayHandler::servoEnabledCB(const std_msgs::Bool & in)
 {
+  status_.servos = in.data;
+
   industrial_msgs::RobotStatus status;
-  bool rtn = true;
-/*
+//  bool rtn = true;
+
   status.header.stamp = ros::Time::now();
-  status.drives_powered.val = TriStates::toROSMsgEnum(in.status_.getDrivesPowered());
-  status.e_stopped.val = TriStates::toROSMsgEnum(in.status_.getEStopped());
+  status.drives_powered.val = status_.servos ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+/*  status.e_stopped.val = TriStates::toROSMsgEnum(in.status_.getEStopped());
   status.error_code = in.status_.getErrorCode();
   status.in_error.val = TriStates::toROSMsgEnum(in.status_.getInError());
   status.in_motion.val = TriStates::toROSMsgEnum(in.status_.getInMotion());

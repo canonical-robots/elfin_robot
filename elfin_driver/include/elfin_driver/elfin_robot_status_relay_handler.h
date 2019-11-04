@@ -72,15 +72,25 @@ protected:
   ros::Subscriber sub_robot_status_;
   ros::Publisher pub_robot_status_;
   ros::NodeHandle node_;
+
+  struct robots_status{
+	  bool servos;
+  } status_;
   
   /**
    * \brief Callback executed upon receiving a robot status message
    *
    * \param in incoming message
    *
-   * \return true on success, false otherwise
    */
-  void internalCB(const std_msgs::Bool & in);
+
+  void servoEnabledCB(const std_msgs::Bool & in);  
+
+  /**
+   * \brief Not implemented
+   *
+   */
+
   bool internalCB(industrial::simple_message::SimpleMessage & in);
 
 };

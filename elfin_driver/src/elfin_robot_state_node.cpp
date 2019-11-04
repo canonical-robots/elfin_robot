@@ -44,11 +44,14 @@ int main(int argc, char** argv)
   ElfinRobotStateInterface rsi;
   ElfinRobotStatusRelayHandler statusHandler;
 
-  rsi.add_handler(&statusHandler);
+  statusHandler.init();
+//  rsi.add_handler(&statusHandler);
 
-  if (rsi.init())
+  ros::spin();
+/*  if (rsi.init())
   {
     rsi.run();
   }
+*/
   return 0;
 }
