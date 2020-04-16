@@ -40,17 +40,19 @@ target_link_libraries(${PROJECT_NAME}_motion_download_interface
 set_target_properties(${PROJECT_NAME}_motion_download_interface
   PROPERTIES OUTPUT_NAME motion_download_interface PREFIX "")
 
-if(CATKIN_ENABLE_TESTING)
-    catkin_add_gtest(utest_elfin_driver test/elfin_driver_gtest.cpp)
-    target_link_libraries(utest_elfin_driver  
-	  industrial_robot_client
-	  simple_message
-	${catkin_LIBRARIES})
-    install(
-	FILES test/elfin_launch.sh
-	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-    )
-endif()
+# Unit testing requires a physical robot. Commented for CI.
+#
+#if(CATKIN_ENABLE_TESTING)
+#    catkin_add_gtest(utest_elfin_driver test/elfin_driver_gtest.cpp)
+#    target_link_libraries(utest_elfin_driver  
+#	  industrial_robot_client
+#	  simple_message
+#	${catkin_LIBRARIES})
+#    install(
+#	FILES test/elfin_launch.sh
+#	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#    )
+#endif()
 
 
 install(
