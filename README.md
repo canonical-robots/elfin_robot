@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/canonical-robots/elfin_robot.svg?branch=kinetic-devel)](https://travis-ci.org/canonical-robots/elfin_robot")
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 Elfin Robot
 ======
 
