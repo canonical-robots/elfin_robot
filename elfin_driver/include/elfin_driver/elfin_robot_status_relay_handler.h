@@ -33,8 +33,13 @@
 #ifndef ELFIN_ROBOT_STATUS_RELAY_HANDLER_H
 #define ELFIN_ROBOT_STATUS_RELAY_HANDLER_H
 
+#include <ros/ros.h>
 #include "industrial_robot_client/robot_status_relay_handler.h"
 #include "std_msgs/Bool.h"
+#include <std_msgs/Empty.h>
+#include <std_srvs/SetBool.h>
+#include <std_msgs/Int64.h>
+#include <std_msgs/Empty.h>
 
 
 namespace elfin_driver
@@ -70,11 +75,18 @@ public:
 protected:
   
   ros::Subscriber sub_robot_status_;
+  ros::Subscriber sub_robot_fault_;
+  ros::Subscriber sub_arm_controller_;
+
   ros::Publisher pub_robot_status_;
+  
+  ros::ServiceClient get_motion_state_client_;
+
   ros::NodeHandle node_;
 
   struct robots_status{
 	  bool servos;
+	  bool fault;
   } status_;
   
   /**
@@ -87,12 +99,34 @@ protected:
   void servoEnabledCB(const std_msgs::Bool & in);  
 
   /**
+   * \brief Callback executed upon receiving a robot status message
+   *
+   * \param in incoming message
+   *
+   */
+
+  void faultCB(const std_msgs::Bool & in);  
+  /**
+   * \brief Callback executed upon receiving a robot status message
+   *
+   * \param in incoming message
+   *
+   */
+
+  void armControllerCB(const std_msgs::Bool & in);  
+
+  /**
    * \brief Not implemented
    *
    */
 
   bool internalCB(industrial::simple_message::SimpleMessage & in);
 
+  /**
+   * \brief Call a ROS service to check if the robot is moving
+   *
+   */
+  bool checkMotionState();
 };
 
 }

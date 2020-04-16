@@ -32,6 +32,7 @@
 #include "elfin_driver/elfin_robot_status_relay_handler.h"
 #include "industrial_robot_client/robot_status_relay_handler.h"
 #include "industrial_msgs/RobotStatus.h"
+#include "industrial_msgs/RobotMode.h"
 #include "simple_message/log_wrapper.h"
 
 using namespace industrial::shared_types;
@@ -47,7 +48,17 @@ namespace elfin_robot_status_relay_handler
 
 bool ElfinRobotStatusRelayHandler::init()
 {
+  // Susbscribed topics from non ROS-Industrial driver
   sub_robot_status_ = node_.subscribe("/elfin_ros_control/elfin/enable_state", 1000, &ElfinRobotStatusRelayHandler::servoEnabledCB, this);
+  sub_robot_fault_ = node_.subscribe("/elfin_ros_control/elfin/fault_state", 1000, &ElfinRobotStatusRelayHandler::faultCB, this);
+  sub_arm_controller_ = node_.subscribe("/elfin_arm_controller/state", 1000, &ElfinRobotStatusRelayHandler::armControllerCB, this);
+  
+  // Published topic for ROS-Industrial driver
+  pub_robot_status_ = node_.advertise<industrial_msgs::RobotStatus>("robot_status", 1);
+  
+  // Service from non ROS-Industrial driver
+  get_motion_state_client_ = node_.serviceClient<std_srvs::SetBool>("/elfin_ros_control/elfin/get_motion_state");
+  
   return true;
 }
 
@@ -55,6 +66,16 @@ bool ElfinRobotStatusRelayHandler::internalCB(SimpleMessage & in)
 {
 	ROS_ERROR("Not implemented");
 	return false;
+}
+
+void ElfinRobotStatusRelayHandler::armControllerCB(const std_msgs::Bool & in)
+{
+	
+}
+
+void ElfinRobotStatusRelayHandler::faultCB(const std_msgs::Bool & in)
+{
+	status_.fault = in.data;
 }
 
 void ElfinRobotStatusRelayHandler::servoEnabledCB(const std_msgs::Bool & in)
@@ -66,6 +87,14 @@ void ElfinRobotStatusRelayHandler::servoEnabledCB(const std_msgs::Bool & in)
 
   status.header.stamp = ros::Time::now();
   status.drives_powered.val = status_.servos ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+  status.in_error.val = status_.fault ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+  status.in_motion.val = checkMotionState() ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+  
+  status.mode.val = industrial_msgs::RobotMode().UNKNOWN;
+  status.motion_possible.val = !status_.fault ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+  status.e_stopped.val = status_.fault ? industrial_msgs::TriState().TRUE : industrial_msgs::TriState().FALSE;
+  status.error_code = status_.fault ? -1 : 0;
+  
 /*  status.e_stopped.val = TriStates::toROSMsgEnum(in.status_.getEStopped());
   status.error_code = in.status_.getErrorCode();
   status.in_error.val = TriStates::toROSMsgEnum(in.status_.getInError());
@@ -73,6 +102,7 @@ void ElfinRobotStatusRelayHandler::servoEnabledCB(const std_msgs::Bool & in)
   status.mode.val = RobotModes::toROSMsgEnum(in.status_.getMode());
   status.motion_possible.val = TriStates::toROSMsgEnum(in.status_.getMotionPossible());
   */
+  ROS_INFO("el resultado: %d", in.data);
   this->pub_robot_status_.publish(status);
 
   // Reply back to the controller if the sender requested it.
@@ -83,6 +113,27 @@ void ElfinRobotStatusRelayHandler::servoEnabledCB(const std_msgs::Bool & in)
     this->getConnection()->sendMsg(reply);
   }
 */
+}
+
+bool ElfinRobotStatusRelayHandler::checkMotionState()
+{
+    std_srvs::SetBool::Request req_tmp;
+    std_srvs::SetBool::Response resp_tmp;
+
+    // Check motion state
+    if(!get_motion_state_client_.exists())
+    {
+        return false;
+    }
+
+    req_tmp.data=true;
+    get_motion_state_client_.call(req_tmp, resp_tmp);
+    if(resp_tmp.success)
+    {
+        return true;
+    }
+	else
+		return false;
 }
 
 }

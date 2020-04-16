@@ -30,10 +30,12 @@
  */
 
 #include "elfin_driver/elfin_robot_status_relay_handler.h"
+#include "elfin_driver/elfin_robot_joint_relay_handler.h"
 #include "elfin_driver/elfin_robot_state_interface.h"
 
 using elfin_driver::elfin_robot_state_interface::ElfinRobotStateInterface;
 using elfin_driver::elfin_robot_status_relay_handler::ElfinRobotStatusRelayHandler;
+using elfin_driver::elfin_robot_joint_relay_handler::ElfinRobotJointRelayHandler;
 
 int main(int argc, char** argv)
 {
@@ -43,8 +45,10 @@ int main(int argc, char** argv)
   // launch the default Robot State Interface connection/handlers
   ElfinRobotStateInterface rsi;
   ElfinRobotStatusRelayHandler statusHandler;
+  ElfinRobotJointRelayHandler jointHandler;
 
   statusHandler.init();
+  jointHandler.init();
 //  rsi.add_handler(&statusHandler);
 
   ros::spin();
