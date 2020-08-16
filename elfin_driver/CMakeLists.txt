@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(elfin_driver)
 add_definitions(-std=c++11)
-find_package(catkin REQUIRED COMPONENTS industrial_robot_client simple_message)
+find_package(catkin REQUIRED COMPONENTS control_msgs industrial_robot_client simple_message)
 
 catkin_package(
   CATKIN_DEPENDS industrial_robot_client
@@ -40,19 +40,25 @@ target_link_libraries(${PROJECT_NAME}_motion_download_interface
 set_target_properties(${PROJECT_NAME}_motion_download_interface
   PROPERTIES OUTPUT_NAME motion_download_interface PREFIX "")
 
-# Unit testing requires a physical robot. Commented for CI.
-#
-#if(CATKIN_ENABLE_TESTING)
+# Unit testing uses a mockup simulation of robot messafes.
+
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    add_executable(${PROJECT_NAME}_mockup
+    test/elfin_robot_mockup.cpp)
+    target_link_libraries(${PROJECT_NAME}_mockup
+        ${catkin_LIBRARIES})
 #    catkin_add_gtest(utest_elfin_driver test/elfin_driver_gtest.cpp)
-#    target_link_libraries(utest_elfin_driver  
-#	  industrial_robot_client
-#	  simple_message
-#	${catkin_LIBRARIES})
-#    install(
-#	FILES test/elfin_launch.sh
-#	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-#    )
-#endif()
+    add_rostest_gtest(utest_elfin_driver test/robot_mockup_interface.test test/elfin_driver_gtest.cpp)
+    target_link_libraries(utest_elfin_driver  
+        industrial_robot_client
+        simple_message
+	${catkin_LIBRARIES})
+    install(
+	FILES test/elfin_launch.sh
+	DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    )
+endif()
 
 
 install(

@@ -20,7 +20,8 @@
   <url type="repository">https://github.com/canonical-robots/elfin_robot</url>
 
   <buildtool_depend>catkin</buildtool_depend>
-
+  <test_depend>rostest</test_depend>
   <depend>industrial_robot_client</depend>
+  <depend>control_msgs</depend>
 
 </package>

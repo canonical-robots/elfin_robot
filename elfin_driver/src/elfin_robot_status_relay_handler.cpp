@@ -12,7 +12,7 @@
  * 	* Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
- * 	* Neither the name of the Southwest Research Institute, nor the names
+ * 	* Neither the name of the Canonical Robots, nor the names
  *	of its contributors may be used to endorse or promote products derived
  *	from this software without specific prior written permission.
  *
@@ -29,6 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "control_msgs/JointTrajectoryControllerState.h"
+#include "control_msgs/FollowJointTrajectoryFeedback.h"
 #include "elfin_driver/elfin_robot_status_relay_handler.h"
 #include "industrial_robot_client/robot_status_relay_handler.h"
 #include "industrial_msgs/RobotStatus.h"
@@ -41,6 +43,7 @@ using namespace industrial::simple_message;
 using namespace industrial::robot_status;
 using namespace industrial::robot_status_message;
 
+
 namespace elfin_driver
 {
 namespace elfin_robot_status_relay_handler
@@ -51,13 +54,15 @@ bool ElfinRobotStatusRelayHandler::init()
   // Susbscribed topics from non ROS-Industrial driver
   sub_robot_status_ = node_.subscribe("/elfin_ros_control/elfin/enable_state", 1000, &ElfinRobotStatusRelayHandler::servoEnabledCB, this);
   sub_robot_fault_ = node_.subscribe("/elfin_ros_control/elfin/fault_state", 1000, &ElfinRobotStatusRelayHandler::faultCB, this);
-  sub_arm_controller_ = node_.subscribe("/elfin_arm_controller/state", 1000, &ElfinRobotStatusRelayHandler::armControllerCB, this);
+  sub_arm_controller_ = node_.subscribe("/elfin_arm_controller/state", 1, &ElfinRobotStatusRelayHandler::armControllerCB, this);
+
+  // Service from non ROS-Industrial driver
+  get_motion_state_client_ = node_.serviceClient<std_srvs::SetBool>("/elfin_ros_control/elfin/get_motion_state");
   
   // Published topic for ROS-Industrial driver
   pub_robot_status_ = node_.advertise<industrial_msgs::RobotStatus>("robot_status", 1);
+  pub_feedback_states_ = node_.advertise<control_msgs::FollowJointTrajectoryFeedback>("feedback_states", 1);
   
-  // Service from non ROS-Industrial driver
-  get_motion_state_client_ = node_.serviceClient<std_srvs::SetBool>("/elfin_ros_control/elfin/get_motion_state");
   
   return true;
 }
@@ -68,9 +73,12 @@ bool ElfinRobotStatusRelayHandler::internalCB(SimpleMessage & in)
 	return false;
 }
 
-void ElfinRobotStatusRelayHandler::armControllerCB(const std_msgs::Bool & in)
-{
-	
+void ElfinRobotStatusRelayHandler::armControllerCB(const control_msgs::JointTrajectoryControllerState & in)
+{	
+	// Receive feedback from the Elfin robot and publish to ROS industrial driver topic
+	control_msgs::FollowJointTrajectoryFeedback msg;
+	msg.actual = in.actual;
+	pub_feedback_states_.publish(msg);
 }
 
 void ElfinRobotStatusRelayHandler::faultCB(const std_msgs::Bool & in)

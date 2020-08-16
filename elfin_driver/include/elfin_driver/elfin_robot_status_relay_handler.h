@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2012, Southwest Research Institute
+ * Copyright (c) 2019, 2020 Canonical Robots
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +36,8 @@
 
 #include <ros/ros.h>
 #include "industrial_robot_client/robot_status_relay_handler.h"
+#include "control_msgs/JointTrajectoryControllerState.h"
+#include "control_msgs/JointTrajectoryFeedback.h"
 #include "std_msgs/Bool.h"
 #include <std_msgs/Empty.h>
 #include <std_srvs/SetBool.h>
@@ -79,6 +82,7 @@ protected:
   ros::Subscriber sub_arm_controller_;
 
   ros::Publisher pub_robot_status_;
+  ros::Publisher pub_feedback_states_;
   
   ros::ServiceClient get_motion_state_client_;
 
@@ -113,7 +117,7 @@ protected:
    *
    */
 
-  void armControllerCB(const std_msgs::Bool & in);  
+  void armControllerCB(const control_msgs::JointTrajectoryControllerState & in);  
 
   /**
    * \brief Not implemented
